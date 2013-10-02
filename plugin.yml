@@ -1,0 +1,23 @@
+name: ExecuteSH
+main: com.comze_instancelabs.executesh.Main
+version: 1.0
+author: instancelabs
+commands:
+   esh:
+      description: Main command
+      usage: /esh [file]
+   ls:
+      description: Main command
+      usage: /ls
+   ps:
+      description: Main command
+      usage: /ps
+   start:
+      description: Main command
+      usage: /start
+   pstree:
+      description: Main command
+      usage: /pstree
+   kill:
+      description: Main command
+      usage: /kill
