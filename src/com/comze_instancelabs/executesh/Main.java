@@ -64,8 +64,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 
 /**
  * 
@@ -80,7 +78,8 @@ public final class Main extends JavaPlugin{
     		if(args.length < 1){
     			sender.sendMessage("§3/esh [sh file]");
     			sender.sendMessage("§3/ls");
-    			sender.sendMessage("§3/ps");
+    			sender.sendMessage("§3/ps or /ps -a");
+    			sender.sendMessage("§3/pstree");
     			sender.sendMessage("§3/start [process]");
     			sender.sendMessage("§3/kill [processid]");
     		}else{
@@ -110,7 +109,7 @@ public final class Main extends JavaPlugin{
 				
 				if(p != null){
 					sender.sendMessage("§2Successfully started.");
-					BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					/*BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					String line = null;
 					try {
 						while ((line = reader.readLine()) != null) {
@@ -118,11 +117,18 @@ public final class Main extends JavaPlugin{
 						}
 					} catch (IOException e) {
 						sender.sendMessage(e.getMessage());
-					}	
+					}*/	
 				}else{
 					sender.sendMessage("§4Process was not started.");
 				}
     		}
+    		return true;
+    	}else if(cmd.getName().equalsIgnoreCase("startextra")){
+    		try {
+    			Process p = Runtime.getRuntime().exec(new String[]{"/bin/sh" ,"-c", "start.sh"});
+			} catch (IOException e1) {
+				sender.sendMessage("E1" + e1.getMessage());
+			}
     		return true;
     	}else if(cmd.getName().equalsIgnoreCase("ls")){
     		sender.sendMessage("§3" + System.getProperty("user.dir"));
@@ -140,25 +146,48 @@ public final class Main extends JavaPlugin{
 			}
 			return true;
     	}else if(cmd.getName().equalsIgnoreCase("ps")){
-    		Process p = null;
-    		try {
-				p = Runtime.getRuntime().exec("ps -A");
-			} catch (IOException e) {
-				sender.sendMessage("§4Error creating process: " + e.getMessage());
-			}
-    		
-    		if(p != null){
-    			sender.sendMessage("§2Successfully started.");
-				BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				String line = null;
-				try {
-					while ((line = reader.readLine()) != null) {
-						sender.sendMessage(line);
-					}
+    		if(args.length > 0){
+	    		Process p = null;
+	    		try {
+					p = Runtime.getRuntime().exec("ps -A");
 				} catch (IOException e) {
-					sender.sendMessage(e.getMessage());
+					sender.sendMessage("§4Error creating process: " + e.getMessage());
+				}
+	    		
+	    		if(p != null){
+	    			sender.sendMessage("§2Successfully started.");
+					BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					String line = null;
+					try {
+						while ((line = reader.readLine()) != null) {
+							sender.sendMessage(line);
+						}
+					} catch (IOException e) {
+						sender.sendMessage(e.getMessage());
+					}	
 				}	
-			}
+    		}else{
+    			Process p = null;
+	    		try {
+					p = Runtime.getRuntime().exec("ps");
+				} catch (IOException e) {
+					sender.sendMessage("§4Error creating process: " + e.getMessage());
+				}
+	    		
+	    		if(p != null){
+	    			sender.sendMessage("§2Successfully started.");
+					BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					String line = null;
+					try {
+						while ((line = reader.readLine()) != null) {
+							sender.sendMessage(line);
+						}
+					} catch (IOException e) {
+						sender.sendMessage(e.getMessage());
+					}	
+				}	
+    		}
+    		
     		return true;
     	}else if(cmd.getName().equalsIgnoreCase("pstree")){
     		Process p = null;
@@ -182,6 +211,7 @@ public final class Main extends JavaPlugin{
 			}
     		return true;
     	}else if(cmd.getName().equalsIgnoreCase("start")){
+    		//TODO: multithreading, otherwise crashes server
     		if(args.length > 0){
 	    		Process p = null;
 	    		try {
@@ -190,13 +220,19 @@ public final class Main extends JavaPlugin{
 					sender.sendMessage("§4Error creating process: " + e.getMessage());
 				}
 	    		
+	    		int count = 0;
+	    		
 	    		if(p != null){
 	    			sender.sendMessage("§2Successfully started.");
 					BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 					String line = null;
 					try {
 						while ((line = reader.readLine()) != null) {
+							count += 1;
 							sender.sendMessage(line);
+							if(count > 200){ // 500
+								return true;
+							}
 						}
 					} catch (IOException e) {
 						sender.sendMessage(e.getMessage());

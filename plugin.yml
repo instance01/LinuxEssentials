@@ -21,3 +21,6 @@ commands:
    kill:
       description: Main command
       usage: /kill
+   startextra:
+      description: Main command
+      usage: /startextra
