@@ -15,12 +15,21 @@ commands:
    start:
       description: Main command
       usage: /start
+   sa:
+      description: Main command
+      usage: /sa
+   start2:
+      description: Main command
+      usage: /start2
    pstree:
       description: Main command
       usage: /pstree
    kill:
       description: Main command
       usage: /kill
+   killname:
+      description: Main command
+      usage: /killname
    startextra:
       description: Main command
       usage: /startextra
